@@ -307,5 +307,19 @@ ShaderLib.physical = {
 
 };
 
+ShaderLib.template = {
+
+	uniforms: mergeUniforms( [
+		ShaderLib.physical.uniforms,
+		// {
+		// 	killerFeature: { value: 1 },
+		// }
+	] ),
+
+	vertexShader: ShaderChunk.meshtemplate_vert,
+	fragmentShader: ShaderChunk.meshtemplate_frag
+
+};
+
 
 export { ShaderLib };

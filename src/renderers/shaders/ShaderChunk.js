@@ -120,6 +120,8 @@ import meshphong_frag from './ShaderLib/meshphong_frag.glsl.js';
 import meshphong_vert from './ShaderLib/meshphong_vert.glsl.js';
 import meshphysical_frag from './ShaderLib/meshphysical_frag.glsl.js';
 import meshphysical_vert from './ShaderLib/meshphysical_vert.glsl.js';
+import meshtemplate_frag from './ShaderLib/meshtemplate_frag.glsl.js';
+import meshtemplate_vert from './ShaderLib/meshtemplate_vert.glsl.js';
 import normal_frag from './ShaderLib/normal_frag.glsl.js';
 import normal_vert from './ShaderLib/normal_vert.glsl.js';
 import points_frag from './ShaderLib/points_frag.glsl.js';
@@ -252,6 +254,8 @@ export const ShaderChunk = {
 	meshphong_vert: meshphong_vert,
 	meshphysical_frag: meshphysical_frag,
 	meshphysical_vert: meshphysical_vert,
+	meshtemplate_frag: meshtemplate_frag,
+	meshtemplate_vert: meshtemplate_vert,
 	normal_frag: normal_frag,
 	normal_vert: normal_vert,
 	points_frag: points_frag,
