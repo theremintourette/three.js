@@ -637,11 +637,7 @@ function WebGLMaterials( properties ) {
 
 		}
 
-		// if ( material.killerFeature ) {
-
-		// 	uniforms.killerFeature.value = material.killerFeature;
-
-		// }
+		uniforms.killerFeature.value = material.killerFeature;
 
 	}
 

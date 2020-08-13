@@ -91,7 +91,6 @@ MeshTemplateMaterial.prototype.copy = function ( source ) {
 
 	this.transmission = source.transmission;
 	this.transmissionMap = source.transmissionMap;
-	this.killerFeature = 1.0;
 
 	this.killerFeature = source.killerFeature;
 	return this;

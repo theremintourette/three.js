@@ -97,13 +97,14 @@
 								color: 0x0000ff,
 								normalMap: normalMap3,
 								normalScale: new THREE.Vector2( 0.15, 0.15 ),
-								killerFeature: 1, // Not working
+								// killerFeature: 1,
 							} );
-							material.killerFeature = 1; // Not working
+							material.killerFeature = 0.2;
 							var mesh = new THREE.Mesh( geometry, material );
 							mesh.position.x = - 100;
 							mesh.position.y = 100;
 							group.add( mesh );
+							window.material = material;
 
 							// // fibers
 

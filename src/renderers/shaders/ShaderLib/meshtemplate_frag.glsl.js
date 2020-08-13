@@ -18,7 +18,7 @@ uniform float opacity;
 	uniform float transmission;
 #endif
 
-#ifdef TRANSMISSION
+#ifdef KILLER_FEATURE
 	uniform float killerFeature;
 #endif
 

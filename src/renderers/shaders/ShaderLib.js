@@ -312,7 +312,7 @@ ShaderLib.template = {
 	uniforms: mergeUniforms( [
 		ShaderLib.physical.uniforms,
 		{
-			killerFeature: { value: 0 },
+			killerFeature: { value: 1 },
 		}
 	] ),
 
