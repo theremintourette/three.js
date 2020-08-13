@@ -34,8 +34,9 @@
 			animate();
 
 			function init() {
-				const Materials = ['MeshStandardMaterial', 'MeshPhysicalMaterial', 'MeshTemplateMaterial'];
-				const Material = Materials[2];
+
+				const Materials = [ 'MeshStandardMaterial', 'MeshPhysicalMaterial', 'MeshTemplateMaterial' ];
+				const Material = Materials[ 2 ];
 
 				container = document.createElement( 'div' );
 				document.body.appendChild( container );
@@ -88,16 +89,17 @@
 
 							// car paint
 
-							var material = new THREE[Material]( {
+							var material = new THREE[ Material ]( {
 								clearcoat: 1.0,
 								clearcoatRoughness: 0.1,
 								metalness: 0.9,
 								roughness: 0.5,
 								color: 0x0000ff,
 								normalMap: normalMap3,
-								normalScale: new THREE.Vector2( 0.15, 0.15 )
+								normalScale: new THREE.Vector2( 0.15, 0.15 ),
+								killerFeature: 1, // Not working
 							} );
-
+							material.killerFeature = 1; // Not working
 							var mesh = new THREE.Mesh( geometry, material );
 							mesh.position.x = - 100;
 							mesh.position.y = 100;
@@ -216,8 +218,6 @@
 				renderer.setSize( width, height );
 
 			}
-
-			//
 
 			function animate() {
 

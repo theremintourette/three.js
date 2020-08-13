@@ -1,10 +1,11 @@
 export default /* glsl */`
 #define STANDARD
 
-#ifdef PHYSICAL
+#ifdef TEMPLATE
 	#define REFLECTIVITY
 	#define CLEARCOAT
 	#define TRANSMISSION
+	#define KILLER_FEATURE
 #endif
 
 uniform vec3 diffuse;
@@ -15,6 +16,10 @@ uniform float opacity;
 
 #ifdef TRANSMISSION
 	uniform float transmission;
+#endif
+
+#ifdef TRANSMISSION
+	uniform float killerFeature;
 #endif
 
 #ifdef REFLECTIVITY
@@ -115,7 +120,7 @@ void main() {
 		diffuseColor.a *= saturate( 1. - totalTransmission + linearToRelativeLuminance( reflectedLight.directSpecular + reflectedLight.indirectSpecular ) );
 	#endif
 
-	gl_FragColor = vec4( outgoingLight, diffuseColor.a );
+	gl_FragColor = vec4( outgoingLight * killerFeature, diffuseColor.a );
 
 	#include <tonemapping_fragment>
 	#include <encodings_fragment>

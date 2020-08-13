@@ -48,6 +48,10 @@ function WebGLMaterials( properties ) {
 
 				refreshUniformsPhysical( uniforms, material );
 
+			} else if ( material.isMeshTemplateMaterial ) {
+
+				refreshUniformsTemplate( uniforms, material, environment );
+
 			} else {
 
 				refreshUniformsStandard( uniforms, material );
@@ -595,6 +599,49 @@ function WebGLMaterials( properties ) {
 			uniforms.transmissionMap.value = material.transmissionMap;
 
 		}
+
+	}
+
+	function refreshUniformsTemplate( uniforms, material, environment ) {
+
+		refreshUniformsStandard( uniforms, material, environment );
+
+		uniforms.reflectivity.value = material.reflectivity; // also part of uniforms common
+
+		uniforms.clearcoat.value = material.clearcoat;
+		uniforms.clearcoatRoughness.value = material.clearcoatRoughness;
+		if ( material.sheen ) uniforms.sheen.value.copy( material.sheen );
+
+		if ( material.clearcoatMap ) {
+
+			uniforms.clearcoatMap.value = material.clearcoatMap;
+
+		}
+
+		if ( material.clearcoatRoughnessMap ) {
+
+			uniforms.clearcoatRoughnessMap.value = material.clearcoatRoughnessMap;
+
+		}
+
+		if ( material.clearcoatNormalMap ) {
+
+			uniforms.clearcoatNormalScale.value.copy( material.clearcoatNormalScale );
+			uniforms.clearcoatNormalMap.value = material.clearcoatNormalMap;
+
+			if ( material.side === BackSide ) {
+
+				uniforms.clearcoatNormalScale.value.negate();
+
+			}
+
+		}
+
+		// if ( material.killerFeature ) {
+
+		// 	uniforms.killerFeature.value = material.killerFeature;
+
+		// }
 
 	}
 

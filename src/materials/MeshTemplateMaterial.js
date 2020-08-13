@@ -16,7 +16,9 @@ import { Color } from '../math/Color.js';
  *  sheen: <Color>,
  *
  *  transmission: <float>,
- *  transmissionMap: new THREE.Texture( <Image> )
+ *  transmissionMap: new THREE.Texture( <Image> ),
+ *
+ *  killerFeature: <float>,
  * }
  */
 
@@ -27,8 +29,7 @@ function MeshTemplateMaterial( parameters ) {
 	this.defines = {
 
 		'STANDARD': '',
-		'PHYSICAL': '',
-		// 'TEMPLATE': ''
+		'TEMPLATE': ''
 
 	};
 
@@ -47,7 +48,7 @@ function MeshTemplateMaterial( parameters ) {
 
 	this.transmission = 0.0;
 	this.transmissionMap = null;
-	// this.killerFeature = 0;
+	this.killerFeature = 1.0;
 
 	this.setValues( parameters );
 
@@ -56,7 +57,7 @@ function MeshTemplateMaterial( parameters ) {
 MeshTemplateMaterial.prototype = Object.create( MeshStandardMaterial.prototype );
 MeshTemplateMaterial.prototype.constructor = MeshTemplateMaterial;
 
-MeshTemplateMaterial.prototype.isMeshPhysicalMaterial = true;
+MeshTemplateMaterial.prototype.isMeshTemplateMaterial = true;
 
 MeshTemplateMaterial.prototype.copy = function ( source ) {
 
@@ -65,8 +66,7 @@ MeshTemplateMaterial.prototype.copy = function ( source ) {
 	this.defines = {
 
 		'STANDARD': '',
-		'PHYSICAL': ''
-		// 'TEMPLATE': ''
+		'TEMPLATE': ''
 
 	};
 
@@ -91,9 +91,9 @@ MeshTemplateMaterial.prototype.copy = function ( source ) {
 
 	this.transmission = source.transmission;
 	this.transmissionMap = source.transmissionMap;
-	
-	this.killerFeature = source.killerFeature;
+	this.killerFeature = 1.0;
 
+	this.killerFeature = source.killerFeature;
 	return this;
 
 };

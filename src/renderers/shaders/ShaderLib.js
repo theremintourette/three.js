@@ -311,9 +311,9 @@ ShaderLib.template = {
 
 	uniforms: mergeUniforms( [
 		ShaderLib.physical.uniforms,
-		// {
-		// 	killerFeature: { value: 1 },
-		// }
+		{
+			killerFeature: { value: 0 },
+		}
 	] ),
 
 	vertexShader: ShaderChunk.meshtemplate_vert,
