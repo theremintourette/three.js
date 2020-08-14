@@ -36,7 +36,7 @@
 
 			function init() {
 
-				const Materials = [ 'MeshStandardMaterial', 'MeshPhysicalMaterial', 'MeshTemplateMaterial' ];
+				const Materials = [ 'MeshStandardMaterial', 'MeshPhysicalMaterial', 'MeshClothMaterial' ];
 				const Material = Materials[ 2 ];
 
 				container = document.createElement( 'div' );
@@ -61,7 +61,7 @@
 							pmremGenerator.dispose();
 
 							var geometry = new THREE.SphereBufferGeometry( 80, 64, 32 );
-							BufferGeometryUtils.computeTangents(geometry);
+							BufferGeometryUtils.computeTangents( geometry );
 
 							var textureLoader = new THREE.TextureLoader();
 
@@ -94,15 +94,17 @@
 							var material = new THREE[ Material ]( {
 								clearcoat: 1.0,
 								clearcoatRoughness: 0.1,
-								metalness: 0.9,
+								// metalness: 0.9,
 								roughness: 0.5,
 								color: 0x0000ff,
 								normalMap: normalMap3,
 								normalScale: new THREE.Vector2( 0.15, 0.15 ),
+								// sheenBRDF: true,
+								// sheen: new THREE.Color( 0.1, 0.1, 1 ),
 								// killerFeature: 1,
 								vertexTangents: true,
 							} );
-							material.killerFeature = 0.2;
+							material.killerFeature = 1.0;
 							var mesh = new THREE.Mesh( geometry, material );
 							mesh.position.x = - 100;
 							mesh.position.y = 100;

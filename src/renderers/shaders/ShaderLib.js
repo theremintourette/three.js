@@ -307,7 +307,7 @@ ShaderLib.physical = {
 
 };
 
-ShaderLib.template = {
+ShaderLib.cloth = {
 
 	uniforms: mergeUniforms( [
 		ShaderLib.physical.uniforms,
@@ -316,8 +316,8 @@ ShaderLib.template = {
 		}
 	] ),
 
-	vertexShader: ShaderChunk.meshtemplate_vert,
-	fragmentShader: ShaderChunk.meshtemplate_frag
+	vertexShader: ShaderChunk.meshcloth_vert,
+	fragmentShader: ShaderChunk.meshcloth_frag
 
 };
 

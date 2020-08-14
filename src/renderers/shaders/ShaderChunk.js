@@ -39,12 +39,15 @@ import lightmap_pars_fragment from './ShaderChunk/lightmap_pars_fragment.glsl.js
 import lights_lambert_vertex from './ShaderChunk/lights_lambert_vertex.glsl.js';
 import lights_pars_begin from './ShaderChunk/lights_pars_begin.glsl.js';
 import envmap_physical_pars_fragment from './ShaderChunk/envmap_physical_pars_fragment.glsl.js';
+import envmap_cloth_pars_fragment from './ShaderChunk/envmap_cloth_pars_fragment.glsl.js';
 import lights_toon_fragment from './ShaderChunk/lights_toon_fragment.glsl.js';
 import lights_toon_pars_fragment from './ShaderChunk/lights_toon_pars_fragment.glsl.js';
 import lights_phong_fragment from './ShaderChunk/lights_phong_fragment.glsl.js';
 import lights_phong_pars_fragment from './ShaderChunk/lights_phong_pars_fragment.glsl.js';
 import lights_physical_fragment from './ShaderChunk/lights_physical_fragment.glsl.js';
+import lights_cloth_fragment from './ShaderChunk/lights_cloth_fragment.glsl.js';
 import lights_physical_pars_fragment from './ShaderChunk/lights_physical_pars_fragment.glsl.js';
+import lights_cloth_pars_fragment from './ShaderChunk/lights_cloth_pars_fragment.glsl.js';
 import lights_fragment_begin from './ShaderChunk/lights_fragment_begin.glsl.js';
 import lights_fragment_maps from './ShaderChunk/lights_fragment_maps.glsl.js';
 import lights_fragment_end from './ShaderChunk/lights_fragment_end.glsl.js';
@@ -120,8 +123,8 @@ import meshphong_frag from './ShaderLib/meshphong_frag.glsl.js';
 import meshphong_vert from './ShaderLib/meshphong_vert.glsl.js';
 import meshphysical_frag from './ShaderLib/meshphysical_frag.glsl.js';
 import meshphysical_vert from './ShaderLib/meshphysical_vert.glsl.js';
-import meshtemplate_frag from './ShaderLib/meshtemplate_frag.glsl.js';
-import meshtemplate_vert from './ShaderLib/meshtemplate_vert.glsl.js';
+import meshcloth_frag from './ShaderLib/meshcloth_frag.glsl.js';
+import meshcloth_vert from './ShaderLib/meshcloth_vert.glsl.js';
 import normal_frag from './ShaderLib/normal_frag.glsl.js';
 import normal_vert from './ShaderLib/normal_vert.glsl.js';
 import points_frag from './ShaderLib/points_frag.glsl.js';
@@ -163,6 +166,7 @@ export const ShaderChunk = {
 	envmap_pars_fragment: envmap_pars_fragment,
 	envmap_pars_vertex: envmap_pars_vertex,
 	envmap_physical_pars_fragment: envmap_physical_pars_fragment,
+	envmap_cloth_pars_fragment: envmap_cloth_pars_fragment,
 	envmap_vertex: envmap_vertex,
 	fog_vertex: fog_vertex,
 	fog_pars_vertex: fog_pars_vertex,
@@ -178,7 +182,9 @@ export const ShaderChunk = {
 	lights_phong_fragment: lights_phong_fragment,
 	lights_phong_pars_fragment: lights_phong_pars_fragment,
 	lights_physical_fragment: lights_physical_fragment,
+	lights_cloth_fragment: lights_cloth_fragment,
 	lights_physical_pars_fragment: lights_physical_pars_fragment,
+	lights_cloth_pars_fragment: lights_cloth_pars_fragment,
 	lights_fragment_begin: lights_fragment_begin,
 	lights_fragment_maps: lights_fragment_maps,
 	lights_fragment_end: lights_fragment_end,
@@ -254,8 +260,8 @@ export const ShaderChunk = {
 	meshphong_vert: meshphong_vert,
 	meshphysical_frag: meshphysical_frag,
 	meshphysical_vert: meshphysical_vert,
-	meshtemplate_frag: meshtemplate_frag,
-	meshtemplate_vert: meshtemplate_vert,
+	meshcloth_frag: meshcloth_frag,
+	meshcloth_vert: meshcloth_vert,
 	normal_frag: normal_frag,
 	normal_vert: normal_vert,
 	points_frag: points_frag,

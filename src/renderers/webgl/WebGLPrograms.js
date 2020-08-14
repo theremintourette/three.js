@@ -25,7 +25,7 @@ function WebGLPrograms( renderer, cubemaps, extensions, capabilities, bindingSta
 		MeshToonMaterial: 'toon',
 		MeshStandardMaterial: 'physical',
 		MeshPhysicalMaterial: 'physical',
-		MeshTemplateMaterial: 'template',
+		MeshClothMaterial: 'cloth',
 		MeshMatcapMaterial: 'matcap',
 		LineBasicMaterial: 'basic',
 		LineDashedMaterial: 'dashed',

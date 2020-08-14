@@ -1,7 +1,7 @@
 export default /* glsl */`
 #define STANDARD
 
-#ifdef TEMPLATE
+#ifdef CLOTH
 	#define REFLECTIVITY
 	#define CLEARCOAT
 	#define TRANSMISSION
@@ -65,10 +65,10 @@ varying vec3 vViewPosition;
 #include <bsdfs>
 #include <cube_uv_reflection_fragment>
 #include <envmap_common_pars_fragment>
-#include <envmap_physical_pars_fragment>
+#include <envmap_cloth_pars_fragment>
 #include <fog_pars_fragment>
 #include <lights_pars_begin>
-#include <lights_physical_pars_fragment>
+#include <lights_cloth_pars_fragment>
 #include <shadowmap_pars_fragment>
 #include <bumpmap_pars_fragment>
 #include <normalmap_pars_fragment>
@@ -105,7 +105,7 @@ void main() {
 	#include <transmissionmap_fragment>
 
 	// accumulation
-	#include <lights_physical_fragment>
+	#include <lights_cloth_fragment>
 	#include <lights_fragment_begin>
 	#include <lights_fragment_maps>
 	#include <lights_fragment_end>

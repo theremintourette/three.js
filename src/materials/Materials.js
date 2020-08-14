@@ -4,7 +4,7 @@ export { RawShaderMaterial } from './RawShaderMaterial.js';
 export { ShaderMaterial } from './ShaderMaterial.js';
 export { PointsMaterial } from './PointsMaterial.js';
 export { MeshPhysicalMaterial } from './MeshPhysicalMaterial.js';
-export { MeshTemplateMaterial } from './MeshTemplateMaterial.js';
+export { MeshClothMaterial } from './MeshClothMaterial.js';
 export { MeshStandardMaterial } from './MeshStandardMaterial.js';
 export { MeshPhongMaterial } from './MeshPhongMaterial.js';
 export { MeshToonMaterial } from './MeshToonMaterial.js';

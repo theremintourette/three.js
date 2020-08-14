@@ -22,18 +22,18 @@ import { Color } from '../math/Color.js';
  * }
  */
 
-function MeshTemplateMaterial( parameters ) {
+function MeshClothMaterial( parameters ) {
 
 	MeshStandardMaterial.call( this );
 
 	this.defines = {
 
 		'STANDARD': '',
-		'TEMPLATE': ''
+		'CLOTH': ''
 
 	};
 
-	this.type = 'MeshTemplateMaterial';
+	this.type = 'MeshClothMaterial';
 
 	this.clearcoat = 0.0;
 	this.clearcoatMap = null;
@@ -54,12 +54,12 @@ function MeshTemplateMaterial( parameters ) {
 
 }
 
-MeshTemplateMaterial.prototype = Object.create( MeshStandardMaterial.prototype );
-MeshTemplateMaterial.prototype.constructor = MeshTemplateMaterial;
+MeshClothMaterial.prototype = Object.create( MeshStandardMaterial.prototype );
+MeshClothMaterial.prototype.constructor = MeshClothMaterial;
 
-MeshTemplateMaterial.prototype.isMeshTemplateMaterial = true;
+MeshClothMaterial.prototype.isMeshClothMaterial = true;
 
-MeshTemplateMaterial.prototype.copy = function ( source ) {
+MeshClothMaterial.prototype.copy = function ( source ) {
 
 	MeshStandardMaterial.prototype.copy.call( this, source );
 
@@ -97,4 +97,4 @@ MeshTemplateMaterial.prototype.copy = function ( source ) {
 
 };
 
-export { MeshTemplateMaterial };
+export { MeshClothMaterial };

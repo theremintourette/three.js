@@ -48,7 +48,7 @@ function WebGLMaterials( properties ) {
 
 				refreshUniformsPhysical( uniforms, material );
 
-			} else if ( material.isMeshTemplateMaterial ) {
+			} else if ( material.isMeshClothMaterial ) {
 
 				refreshUniformsTemplate( uniforms, material, environment );
 
