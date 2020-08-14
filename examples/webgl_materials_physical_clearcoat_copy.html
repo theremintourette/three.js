@@ -15,6 +15,7 @@
 
 			// import * as THREE from '../build/three.module.js';
 			import * as THREE from '../src/Three.js';
+			import { BufferGeometryUtils  } from '../examples/jsm/utils/BufferGeometryUtils.js';
 
 			import Stats from './jsm/libs/stats.module.js';
 
@@ -60,6 +61,7 @@
 							pmremGenerator.dispose();
 
 							var geometry = new THREE.SphereBufferGeometry( 80, 64, 32 );
+							BufferGeometryUtils.computeTangents(geometry);
 
 							var textureLoader = new THREE.TextureLoader();
 
@@ -98,6 +100,7 @@
 								normalMap: normalMap3,
 								normalScale: new THREE.Vector2( 0.15, 0.15 ),
 								// killerFeature: 1,
+								vertexTangents: true,
 							} );
 							material.killerFeature = 0.2;
 							var mesh = new THREE.Mesh( geometry, material );
