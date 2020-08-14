@@ -2,7 +2,6 @@ export default /* glsl */`
 #define STANDARD
 
 #ifdef CLOTH
-	#define REFLECTIVITY
 	#define CLEARCOAT
 	#define TRANSMISSION
 	#define KILLER_FEATURE
@@ -11,7 +10,6 @@ export default /* glsl */`
 uniform vec3 diffuse;
 uniform vec3 emissive;
 uniform float roughness;
-uniform float metalness;
 uniform float opacity;
 
 #ifdef TRANSMISSION
@@ -20,10 +18,6 @@ uniform float opacity;
 
 #ifdef KILLER_FEATURE
 	uniform float killerFeature;
-#endif
-
-#ifdef REFLECTIVITY
-	uniform float reflectivity;
 #endif
 
 #ifdef CLEARCOAT
@@ -74,7 +68,6 @@ varying vec3 vViewPosition;
 #include <normalmap_pars_fragment>
 #include <clearcoat_pars_fragment>
 #include <roughnessmap_pars_fragment>
-#include <metalnessmap_pars_fragment>
 #include <logdepthbuf_pars_fragment>
 #include <clipping_planes_pars_fragment>
 
@@ -96,7 +89,6 @@ void main() {
 	#include <alphamap_fragment>
 	#include <alphatest_fragment>
 	#include <roughnessmap_fragment>
-	#include <metalnessmap_fragment>
 	#include <normal_fragment_begin>
 	#include <normal_fragment_maps>
 	#include <clearcoat_normal_fragment_begin>

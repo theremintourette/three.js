@@ -204,8 +204,7 @@ function resolveIncludes( string ) {
 }
 
 function includeReplacer( match, include ) {
-	console.log(match, include)
-	console.log(ShaderChunk)
+
 	const string = ShaderChunk[ include ];
 
 	if ( string === undefined ) {
