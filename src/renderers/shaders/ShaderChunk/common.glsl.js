@@ -38,6 +38,7 @@ struct IncidentLight {
 	vec3 color;
 	vec3 direction;
 	bool visible;
+	float attenuation;
 };
 
 struct ReflectedLight {

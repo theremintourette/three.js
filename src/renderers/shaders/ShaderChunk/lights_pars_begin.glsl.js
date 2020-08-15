@@ -68,6 +68,7 @@ vec3 getAmbientLightIrradiance( const in vec3 ambientLightColor ) {
 		directLight.color = directionalLight.color;
 		directLight.direction = directionalLight.direction;
 		directLight.visible = true;
+		directLight.attenuation = 1.0;
 
 	}
 
@@ -85,6 +86,23 @@ vec3 getAmbientLightIrradiance( const in vec3 ambientLightColor ) {
 
 	uniform PointLight pointLights[ NUM_POINT_LIGHTS ];
 
+	#if defined(SUBSURFACE)
+		float getSquareFalloffAttenuation(float distanceSquare, float falloff) {
+				float factor = distanceSquare * falloff;
+				float smoothFactor = saturate(1.0 - factor * factor);
+				// We would normally divide by the square distance here
+				// but we do it at the call site
+				return smoothFactor * smoothFactor;
+		}
+
+		float getDistanceAttenuation(const highp vec3 posToLight, float falloff) {
+			float distanceSquare = dot(posToLight, posToLight);
+			float attenuation = getSquareFalloffAttenuation(distanceSquare, falloff);
+			// Assume a punctual light occupies a volume of 1cm to avoid a division by 0
+			return attenuation * 1.0 / max(distanceSquare, 1e-4);
+		}
+	#endif
+
 	// directLight is an out parameter as having it as a return value caused compiler errors on some devices
 	void getPointDirectLightIrradiance( const in PointLight pointLight, const in GeometricContext geometry, out IncidentLight directLight ) {
 
@@ -96,6 +114,8 @@ vec3 getAmbientLightIrradiance( const in vec3 ambientLightColor ) {
 		directLight.color = pointLight.color;
 		directLight.color *= punctualLightIntensityToIrradianceFactor( lightDistance, pointLight.distance, pointLight.decay );
 		directLight.visible = ( directLight.color != vec3( 0.0 ) );
+		// directLight.attenuation = getDistanceAttenuation(lVector, pointLight.decay); // TODO: fix getDistanceAttenuation
+		directLight.attenuation = 1.0;
 
 	}
 
@@ -115,6 +135,14 @@ vec3 getAmbientLightIrradiance( const in vec3 ambientLightColor ) {
 	};
 
 	uniform SpotLight spotLights[ NUM_SPOT_LIGHTS ];
+
+	#if defined(SUBSURFACE)
+		float getAngleAttenuation(const vec3 lightDir, const vec3 l, const vec2 scaleOffset) {
+			float cd = dot(lightDir, l);
+			float attenuation = saturate(cd * scaleOffset.x + scaleOffset.y);
+			return attenuation * attenuation;
+		}
+	#endif
 
 	// directLight is an out parameter as having it as a return value caused compiler errors on some devices
 	void getSpotDirectLightIrradiance( const in SpotLight spotLight, const in GeometricContext geometry, out IncidentLight directLight ) {
@@ -139,6 +167,12 @@ vec3 getAmbientLightIrradiance( const in vec3 ambientLightColor ) {
 			directLight.visible = false;
 
 		}
+	
+		#if defined(SUBSURFACE)
+			// directLight.attenuation *= getAngleAttenuation( -spotLight.direction, directLight.direction, scaleOffsetShadowType.xy ); // TODO: check scaleOffsetShadowType
+			directLight.attenuation *= getAngleAttenuation( -spotLight.direction, directLight.direction, vec2( 1.0, 1.0 ) );
+		#endif
+
 	}
 
 #endif

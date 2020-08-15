@@ -110,13 +110,14 @@ void main() {
 	#include <aomap_fragment>
 
 	vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance;
+	// vec3 outgoingLight = reflectedLight.directDiffuse  + totalEmissiveRadiance;
 
 	// this is a stub for the transmission model
 	#ifdef TRANSMISSION
 		diffuseColor.a *= saturate( 1. - totalTransmission + linearToRelativeLuminance( reflectedLight.directSpecular + reflectedLight.indirectSpecular ) );
 	#endif
 
-	gl_FragColor = vec4( outgoingLight * killerFeature, diffuseColor.a );
+	gl_FragColor = vec4( outgoingLight, diffuseColor.a );
 
 	#include <tonemapping_fragment>
 	#include <encodings_fragment>

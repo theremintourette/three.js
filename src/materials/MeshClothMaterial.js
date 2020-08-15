@@ -29,7 +29,8 @@ function MeshClothMaterial( parameters ) {
 	this.defines = {
 
 		'STANDARD': '',
-		'CLOTH': ''
+		'CLOTH': '',
+		'SUBSURFACE': '',
 
 	};
 

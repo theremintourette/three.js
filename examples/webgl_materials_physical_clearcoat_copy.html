@@ -90,12 +90,11 @@
 							var clearcoatNormaMap = textureLoader.load( "textures/pbr/Scratched_gold/Scratched_gold_01_1K_Normal.png" );
 
 							// car paint
-							const baseColor = new THREE.Color( 0.0, 1.0, 1.0 );
-							const sheenColor = new THREE.Color( 1.0, 0, 1.0 );
+							const baseColor = new THREE.Color( 1.0, 0.0, 0.0 );
+							const sheenColor = new THREE.Color( 0.0, 1.0, 0.0 );
 							var material = new THREE[ Material ]( {
 								clearcoat: 1.0,
 								clearcoatRoughness: 0.1,
-								// metalness: 0.9,
 								roughness: 0.5,
 								color: baseColor,
 								normalMap: normalMap3,
@@ -164,7 +163,7 @@
 							//
 
 							scene.background = hdrCubeRenderTarget.texture;
-							scene.environment = hdrCubeRenderTarget.texture; // UNCOMMENT
+							// scene.environment = hdrCubeRenderTarget.texture; // UNCOMMENT
 
 						}
 
