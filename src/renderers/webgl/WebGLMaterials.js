@@ -50,7 +50,7 @@ function WebGLMaterials( properties ) {
 
 			} else if ( material.isMeshClothMaterial ) {
 
-				refreshUniformsTemplate( uniforms, material, environment );
+				refreshUniformsTemplate( uniforms, material );
 
 			} else {
 

@@ -11,6 +11,14 @@ material.specularRoughness = min( material.specularRoughness, 1.0 );
 
 material.specularColor = vec3( DEFAULT_SPECULAR_COEFFICIENT );
 
+material.sheenColor = sqrt( diffuseColor.rgb );
+
+#ifdef USE_SHEEN
+
+	material.sheenColor = sheen;
+
+#endif
+
 #ifdef CLEARCOAT
 
 	material.clearcoat = clearcoat;
@@ -35,9 +43,4 @@ material.specularColor = vec3( DEFAULT_SPECULAR_COEFFICIENT );
 
 #endif
 
-#ifdef USE_SHEEN
-
-	material.sheenColor = sheen;
-
-#endif
 `;

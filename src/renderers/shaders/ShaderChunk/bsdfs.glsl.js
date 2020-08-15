@@ -146,6 +146,72 @@ vec3 BRDF_Specular_GGX( const in IncidentLight incidentLight, const in vec3 view
 
 } // validated
 
+/////////////////////////////////////////////////////
+// Energy conserving wrap diffuse term, does *not* include the divide by pi
+float Fd_Wrap(float NoL, float w) {
+    return saturate((NoL + w) / pow2(1.0 + w));
+}
+/////////////////////////////////////////////////////
+// Cook-Torrance based microfacet model. Different approach for Distribution and Visibility terms
+// ref: https://github.com/google/filament/blob/cabdc255f5442a54884745431c7c85474dbc4b42/shaders/src/shading_model_cloth.fs#L12
+float pow5(float x) {
+	float x2 = x * x;
+	return x2 * x2 * x;
+}
+
+// TODO: Rename
+float F_Schlick2(float f0, float f90, float VoH) {
+	return f0 + (f90 - f0) * pow5(1.0 - VoH);
+}
+
+float Fd_Burley(float roughness, float dotNV, float dotNL, float dotLH) {
+    // Burley 2012, "Physically-Based Shading at Disney"
+    float f90 = 0.5 + 2.0 * roughness * dotLH * dotLH;
+    float lightScatter = F_Schlick2(1.0, f90, dotNL);
+    float viewScatter  = F_Schlick2(1.0, f90, dotNV);
+    return lightScatter * viewScatter * (1.0 / PI);
+}
+
+float Fd_Lambert() {
+	return 1.0  / PI;
+}
+
+vec3 BRDF_Diffuse_Cloth(const in IncidentLight incidentLight, const in vec3 viewDir, const in vec3 normal, const in vec3 diffuseColor) {
+	vec3 halfDir = normalize( incidentLight.direction + viewDir );
+
+  float dotNL = saturate( dot( normal, incidentLight.direction ) );
+	float dotNV = saturate( dot( normal, viewDir ) );
+	float dotLH = saturate( dot( incidentLight.direction, halfDir ) );
+  #if BRDF_DIFFUSE == DIFFUSE_LAMBERT
+      float radiance = Fd_Lambert();
+  #elif BRDF_DIFFUSE == DIFFUSE_BURLEY
+      float radiance = Fd_Burley(roughness, dotNV, dotNL, dotLH);
+  #endif
+  
+	// #if defined(MATERIAL_HAS_SUBSURFACE_COLOR)
+	// 	// Energy conservative wrap diffuse to simulate subsurface scattering
+	// 	diffuse *= Fd_Wrap(dot(normal, incidentLight.direction), 0.5);
+	// #endif
+
+	vec3 Fd = radiance * diffuseColor;
+
+	// #if defined(MATERIAL_HAS_SUBSURFACE_COLOR)
+	// 	// Cheap subsurface scatter
+	// 	Fd *= saturate(pixel.subsurfaceColor + NoL);
+	// 	// We need to apply NoL separately to the specular lobe since we already took
+	// 	// it into account in the diffuse lobe
+	// 	vec3 color = Fd + Fr * NoL;
+	// 	color *= light.colorIntensity.rgb * (light.colorIntensity.w * light.attenuation * occlusion);
+	// #else
+	// 	vec3 color = Fd + Fr;
+	// 	color *= light.colorIntensity.rgb * (light.colorIntensity.w * light.attenuation * NoL * occlusion);
+	// #endif
+
+	// return color;
+	return Fd;
+}
+/////////////////////////////////////////////
+
 // Rect Area Light
 
 // Real-Time Polygonal-Light Shading with Linearly Transformed Cosines
