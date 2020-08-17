@@ -187,13 +187,19 @@ vec3 BRDF_Diffuse_Cloth(const in IncidentLight incidentLight, const in vec3 view
   #elif BRDF_DIFFUSE == DIFFUSE_BURLEY
       float radiance = Fd_Burley(roughness, dotNV, dotNL, dotLH);
   #endif
-  
+	
 	#if defined(SUBSURFACE)
+
 		// Energy conservative wrap diffuse to simulate subsurface scattering
 		radiance *= Fd_Wrap(dot(normal, incidentLight.direction), 0.5);
+
 	#endif
 
 	vec3 Fd = radiance * diffuseColor;
+
+
+	Fd *= saturate(vec3(0.2, 1.0, 1.0) + dotNL);
+
 
 	return Fd;
 }

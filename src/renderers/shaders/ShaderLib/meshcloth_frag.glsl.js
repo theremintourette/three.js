@@ -110,7 +110,8 @@ void main() {
 	#include <aomap_fragment>
 
 	vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance;
-	// vec3 outgoingLight = reflectedLight.directDiffuse  + totalEmissiveRadiance;
+	// vec3 outgoingLight = reflectedLight.indirectDiffuse  + totalEmissiveRadiance;
+	// vec3 outgoingLight = reflectedLight.directDiffuse + totalEmissiveRadiance;
 
 	// this is a stub for the transmission model
 	#ifdef TRANSMISSION
