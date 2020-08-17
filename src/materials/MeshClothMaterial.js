@@ -30,7 +30,7 @@ function MeshClothMaterial( parameters ) {
 
 		'STANDARD': '',
 		'CLOTH': '',
-		'SUBSURFACE': '',
+		'SUBSURFACE': ''
 
 	};
 
@@ -67,7 +67,8 @@ MeshClothMaterial.prototype.copy = function ( source ) {
 	this.defines = {
 
 		'STANDARD': '',
-		'TEMPLATE': ''
+		'CLOTH': '',
+		'SUBSURFACE': ''
 
 	};
 

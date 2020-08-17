@@ -4,7 +4,6 @@ export default /* glsl */`
 #ifdef CLOTH
 	#define CLEARCOAT
 	#define TRANSMISSION
-	#define KILLER_FEATURE
 #endif
 
 #define DIFFUSE_LAMBERT             0
@@ -20,7 +19,7 @@ uniform float opacity;
 	uniform float transmission;
 #endif
 
-#ifdef KILLER_FEATURE
+#ifdef SUBSURFACE
 	uniform vec3 subsurfaceColor;
 #endif
 

@@ -139,7 +139,6 @@ vec3 getAmbientLightIrradiance( const in vec3 ambientLightColor ) {
 			directLight.visible = false;
 
 		}
-	
 	}
 
 #endif

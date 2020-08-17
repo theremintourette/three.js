@@ -67,54 +67,11 @@ float clearcoatDHRApprox( const in float roughness, const in float dotNL ) {
 
 #endif
 
-// float screenSpaceContactShadow(vec3 lightDirection) {
-// 	// cast a ray in the direction of the light
-// 	float occlusion = 0.0;
-// 	uint kStepCount = (frameUniforms.directionalShadows >> 8u) & 0xFFu;
-// 	float kDistanceMax = frameUniforms.ssContactShadowDistance;
-
-// 	ScreenSpaceRay rayData;
-// 	initScreenSpaceRay(rayData, shading_position, lightDirection, kDistanceMax);
-
-// 	// step
-// 	highp float dt = 1.0 / float(kStepCount);
-
-// 	// tolerance
-// 	float tolerance = abs(rayData.ssViewRayEnd.z - rayData.ssRayStart.z) * dt * 0.5;
-
-// 	// dithter the ray with interleaved grandient noise
-// 	const vec3 m = vec3(0.06711056, 0.00583715, 52.9829189);
-// 	float dither = fract(m.z * fract(dot(gl_FragCoord.xy, m.xy))) - 0.5;
-
-// 	// normalized postion on the ray (0 to 1)
-// 	float t = dt * dither + dt;
-
-// 	highp vec3 ray;
-// 	for (uint i = 0u ; i < kStepCount ; i++, t += dt) {
-// 			ray = rayData.uvRayStart + rayData.uvRay * t;
-// 			float z = textureLod(light_structure, uvToRenderTargetUV(ray.xy), 0.0).r;
-// 			float dz = ray.z - z;
-// 			if (abs(tolerance - dz) < tolerance) {
-// 					occlusion = 1.0;
-// 					break;
-// 			}
-// 	}
-
-// 	// we fade out the contribution of contact shadows towards the edge of the screen
-// 	// because we don't have depth data there
-// 	vec2 fade = max(12.0 * abs(ray.xy - 0.5) - 5.0, 0.0);
-// 	occlusion *= saturate(1.0 - dot(fade, fade));
-// 	return occlusion;
-// }
-
 void RE_Direct_Cloth( const in IncidentLight directLight, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {
 
 	float dotNL = saturate( dot( geometry.normal, directLight.direction ) );
 
 	vec3 irradiance = dotNL * directLight.color;
-
-	// float oclusion = screenSpaceContactShadow(directLight.direction);
-	float occlusion = 0.5; // TODO: fix occlusion
 
 	#ifndef PHYSICALLY_CORRECT_LIGHTS
 
@@ -151,7 +108,6 @@ void RE_Direct_Cloth( const in IncidentLight directLight, const in GeometricCont
 		material.sheenColor
 	);
 	
-	// reflectedLight.directDiffuse += ( 1.0 - clearcoatDHR ) * irradiance * BRDF_Diffuse_Cloth(directLight, geometry.viewDir, geometry.normal, material.diffuseColor);
 	reflectedLight.directDiffuse += ( 1.0 - clearcoatDHR ) * irradiance * BRDF_Diffuse_Cloth(directLight, geometry.viewDir, geometry.normal, material.diffuseColor);
 
 	#if defined(SUBSURFACE)
@@ -162,8 +118,8 @@ void RE_Direct_Cloth( const in IncidentLight directLight, const in GeometricCont
 		reflectedLight.directSpecular * dotNL;
 
 	#else
-		reflectedLight.directDiffuse *= directLight.color * directLight.attenuation * dotNL * occlusion;
-		reflectedLight.directSpecular *= directLight.color * directLight.attenuation * dotNL * occlusion;
+		reflectedLight.directDiffuse *= directLight.color * directLight.attenuation * dotNL;
+		reflectedLight.directSpecular *= directLight.color * directLight.attenuation * dotNL;
 	#endif
 
 }
@@ -215,10 +171,4 @@ void RE_IndirectSpecular_Physical( const in vec3 radiance, const in vec3 irradia
 #define RE_IndirectDiffuse		RE_IndirectDiffuse_Physical
 #define RE_IndirectSpecular		RE_IndirectSpecular_Physical
 
-// ref: https://seblagarde.files.wordpress.com/2015/07/course_notes_moving_frostbite_to_pbr_v32.pdf
-float computeSpecularOcclusion( const in float dotNV, const in float ambientOcclusion, const in float roughness ) {
-
-	return saturate( pow( dotNV + ambientOcclusion, exp2( - 16.0 * roughness - 1.0 ) ) - 1.0 + ambientOcclusion );
-
-}
 `;
