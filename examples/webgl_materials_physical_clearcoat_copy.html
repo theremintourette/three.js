@@ -5,6 +5,8 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<link type="text/css" rel="stylesheet" href="main.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.7.2/dat.gui.min.js"></script>
+
 	</head>
 	<body>
 		<div id="info">
@@ -15,7 +17,8 @@
 
 			// import * as THREE from '../build/three.module.js';
 			import * as THREE from '../src/Three.js';
-			import { BufferGeometryUtils  } from '../examples/jsm/utils/BufferGeometryUtils.js';
+			import { GUI } from './jsm/libs/dat.gui.module.js';
+			import { BufferGeometryUtils } from '../examples/jsm/utils/BufferGeometryUtils.js';
 
 			import Stats from './jsm/libs/stats.module.js';
 
@@ -89,28 +92,57 @@
 
 							var clearcoatNormaMap = textureLoader.load( "textures/pbr/Scratched_gold/Scratched_gold_01_1K_Normal.png" );
 
+							const gui = new GUI();
+
+							const params = {
+								color: new THREE.Color( 0.5, 0.3, 0.0 ),
+								sheen: new THREE.Color( 0.8, 0.2, 0.2 ),
+								subsurfaceColor: new THREE.Color( 0.6, 0.3, 0.2 ),
+							};
+
 							// car paint
-							const color = new THREE.Color( 0.7, 0.5, 0.0 );
-							const sheen = new THREE.Color( 0.8, 0.6, 0.4 );
-							const subsurfaceColor = new THREE.Color( 0.4, 0.8, 1 );
 							var material = new THREE[ Material ]( {
 								clearcoat: 1.0,
 								clearcoatRoughness: 0.1,
 								roughness: 0.5,
-								color,
-								sheen,
-								subsurfaceColor,
+								color: params.color,
+								sheen: params.sheen,
+								subsurfaceColor: params.subsurfaceColor,
 								// normalMap: normalMap3,
 								// normalScale: new THREE.Vector2( 0.15, 0.15 ),
 								sheenBRDF: true,
 								vertexTangents: true,
 							} );
-							material.subsurfaceColor = subsurfaceColor;
+							material.subsurfaceColor = params.subsurfaceColor;
 							var mesh = new THREE.Mesh( geometry, material );
 							mesh.position.x = - 100;
 							mesh.position.y = 100;
 							group.add( mesh );
 							window.material = material;
+
+							const folder = gui.addFolder( 'Model Colour' );
+							folder.addColor( params, 'color' )
+								.name( 'Color' )
+								.onChange( () => {
+
+									material.color.set( new THREE.Color( params.color.r / 255, params.color.g / 255, params.color.b / 255 ) );
+			
+								} );
+							folder.addColor( params, 'sheen' )
+								.name( 'Sheen' )
+								.onChange( () => {
+
+									material.sheen.set( new THREE.Color( params.sheen.r / 255, params.sheen.g / 255, params.sheen.b / 255 ) );
+			
+								} );
+							folder.addColor( params, 'subsurfaceColor' )
+								.name( 'Subsurface' )
+								.onChange( () => {
+
+									material.subsurfaceColor.set( new THREE.Color( params.subsurfaceColor.r / 255, params.subsurfaceColor.g / 255, params.subsurfaceColor.b / 255 ) );
+			
+								} );
+							folder.open();
 
 							// // fibers
 
