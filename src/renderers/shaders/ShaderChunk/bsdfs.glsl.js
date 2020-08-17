@@ -197,10 +197,6 @@ vec3 BRDF_Diffuse_Cloth(const in IncidentLight incidentLight, const in vec3 view
 
 	vec3 Fd = radiance * diffuseColor;
 
-
-	Fd *= saturate(vec3(0.2, 1.0, 1.0) + dotNL);
-
-
 	return Fd;
 }
 /////////////////////////////////////////////

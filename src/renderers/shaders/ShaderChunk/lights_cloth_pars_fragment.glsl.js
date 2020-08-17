@@ -111,15 +111,13 @@ void RE_Direct_Cloth( const in IncidentLight directLight, const in GeometricCont
 	reflectedLight.directDiffuse += ( 1.0 - clearcoatDHR ) * irradiance * BRDF_Diffuse_Cloth(directLight, geometry.viewDir, geometry.normal, material.diffuseColor);
 
 	#if defined(SUBSURFACE)
-		reflectedLight.directDiffuse *= saturate(subsurfaceColor + dotNL); 
-		reflectedLight.directDiffuse * dotNL;
 
-		reflectedLight.directSpecular *= saturate(subsurfaceColor + dotNL);
-		reflectedLight.directSpecular * dotNL;
+		reflectedLight.directDiffuse *= saturate(subsurfaceColor + dotNL); 
+		reflectedLight.directSpecular *= dotNL;
 
 	#else
-		reflectedLight.directDiffuse *= directLight.color * directLight.attenuation * dotNL;
-		reflectedLight.directSpecular *= directLight.color * directLight.attenuation * dotNL;
+		reflectedLight.directDiffuse *= directLight.color * * dotNL;
+		reflectedLight.directSpecular *= directLight.color * dotNL;
 	#endif
 
 }
