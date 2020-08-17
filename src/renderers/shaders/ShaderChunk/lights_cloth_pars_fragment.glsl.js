@@ -157,11 +157,9 @@ void RE_Direct_Cloth( const in IncidentLight directLight, const in GeometricCont
 	#if defined(SUBSURFACE)
 		reflectedLight.directDiffuse *= saturate(subsurfaceColor + dotNL); 
 		reflectedLight.directDiffuse * dotNL;
-		reflectedLight.directDiffuse *= directLight.color * directLight.attenuation * occlusion;
 
 		reflectedLight.directSpecular *= saturate(subsurfaceColor + dotNL);
 		reflectedLight.directSpecular * dotNL;
-		reflectedLight.directSpecular *= directLight.color * directLight.attenuation * occlusion;
 
 	#else
 		reflectedLight.directDiffuse *= directLight.color * directLight.attenuation * dotNL * occlusion;
