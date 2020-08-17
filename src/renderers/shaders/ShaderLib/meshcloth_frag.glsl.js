@@ -21,7 +21,7 @@ uniform float opacity;
 #endif
 
 #ifdef KILLER_FEATURE
-	uniform float killerFeature;
+	uniform vec3 subsurfaceColor;
 #endif
 
 #ifdef CLEARCOAT

@@ -177,7 +177,7 @@ Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 		if ( this.shininess !== undefined ) data.shininess = this.shininess;
 		if ( this.clearcoat !== undefined ) data.clearcoat = this.clearcoat;
 		if ( this.clearcoatRoughness !== undefined ) data.clearcoatRoughness = this.clearcoatRoughness;
-		if ( this.killerFeature !== undefined ) data.killerFeature = this.killerFeature;
+		if ( this.subsurfaceColor && this.subsurfaceColor.isColor ) data.subsurfaceColor = this.subsurfaceColor.getHex();
 
 		if ( this.clearcoatMap && this.clearcoatMap.isTexture ) {
 

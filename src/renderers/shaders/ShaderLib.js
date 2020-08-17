@@ -312,7 +312,7 @@ ShaderLib.cloth = {
 	uniforms: mergeUniforms( [
 		ShaderLib.physical.uniforms,
 		{
-			killerFeature: { value: 1 },
+			subsurfaceColor: { value: new Color( 0xffffff ) },
 		}
 	] ),
 

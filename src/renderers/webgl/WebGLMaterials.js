@@ -50,7 +50,7 @@ function WebGLMaterials( properties ) {
 
 			} else if ( material.isMeshClothMaterial ) {
 
-				refreshUniformsTemplate( uniforms, material );
+				refreshUniformsCloth( uniforms, material );
 
 			} else {
 
@@ -602,7 +602,7 @@ function WebGLMaterials( properties ) {
 
 	}
 
-	function refreshUniformsTemplate( uniforms, material, environment ) {
+	function refreshUniformsCloth( uniforms, material, environment ) {
 
 		refreshUniformsStandard( uniforms, material, environment );
 
@@ -637,7 +637,7 @@ function WebGLMaterials( properties ) {
 
 		}
 
-		uniforms.killerFeature.value = material.killerFeature;
+		if ( material.subsurfaceColor ) uniforms.subsurfaceColor.value.copy( material.subsurfaceColor );
 
 	}
 

@@ -18,7 +18,7 @@ import { Color } from '../math/Color.js';
  *  transmission: <float>,
  *  transmissionMap: new THREE.Texture( <Image> ),
  *
- *  killerFeature: <float>,
+ *  subsurfaceColor: <Vector3>,
  * }
  */
 
@@ -49,7 +49,7 @@ function MeshClothMaterial( parameters ) {
 
 	this.transmission = 0.0;
 	this.transmissionMap = null;
-	this.killerFeature = 1.0;
+	this.subsurfaceColor = new Color( 0xffffff );
 
 	this.setValues( parameters );
 
@@ -93,7 +93,16 @@ MeshClothMaterial.prototype.copy = function ( source ) {
 	this.transmission = source.transmission;
 	this.transmissionMap = source.transmissionMap;
 
-	this.killerFeature = source.killerFeature;
+	if ( source.subsurfaceColor ) {
+
+		this.subsurfaceColor = ( this.subsurfaceColor || new Color() ).copy( source.subsurfaceColor );
+
+	} else {
+
+		this.subsurfaceColor = null;
+
+	}
+
 	return this;
 
 };
