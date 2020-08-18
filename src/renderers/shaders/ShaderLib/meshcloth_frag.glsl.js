@@ -6,10 +6,6 @@ export default /* glsl */`
 	#define TRANSMISSION
 #endif
 
-#define DIFFUSE_LAMBERT             0
-#define DIFFUSE_BURLEY              1
-#define BRDF_DIFFUSE                DIFFUSE_BURLEY
-
 uniform vec3 diffuse;
 uniform vec3 emissive;
 uniform float roughness;

@@ -19,6 +19,7 @@
 			import * as THREE from '../src/Three.js';
 			import { GUI } from './jsm/libs/dat.gui.module.js';
 			import { BufferGeometryUtils } from '../examples/jsm/utils/BufferGeometryUtils.js';
+			import { FBXLoader } from './jsm/loaders/FBXLoader.js';
 
 			import Stats from './jsm/libs/stats.module.js';
 
@@ -34,8 +35,16 @@
 			var particleLight;
 			var group;
 
-			init();
-			animate();
+			var mesh;
+
+
+			new FBXLoader().load( 'models/fbx/cloth.fbx', function ( loadedModel ) {
+
+				mesh = loadedModel.children[ 0 ];
+
+				init();
+
+			} );
 
 			function init() {
 
@@ -49,6 +58,9 @@
 				camera.position.z = 1000;
 
 				scene = new THREE.Scene();
+
+				mesh.scale.multiplyScalar( .5 );
+				scene.add( mesh );
 
 				group = new THREE.Group();
 				scene.add( group );
@@ -197,6 +209,9 @@
 
 							scene.background = hdrCubeRenderTarget.texture;
 							// scene.environment = hdrCubeRenderTarget.texture; // UNCOMMENT
+
+							animate();
+
 
 						}
 

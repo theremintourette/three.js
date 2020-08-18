@@ -67,11 +67,32 @@ float clearcoatDHRApprox( const in float roughness, const in float dotNL ) {
 
 #endif
 
+/////////////////////////////////////////////////////
+// Cook-Torrance based microfacet model. Different approach for Distribution and Visibility terms
+// ref: https://github.com/google/filament/blob/cabdc255f5442a54884745431c7c85474dbc4b42/shaders/src/shading_model_cloth.fs#L12
+
+vec3 BRDF_Diffuse_Cloth(const in IncidentLight incidentLight, const in vec3 viewDir, const in vec3 normal, const in vec3 diffuseColor) {
+
+  float dotNL = saturate( dot( normal, incidentLight.direction ) );
+	float radiance = RECIPROCAL_PI; // Lambert BRDF
+	
+	#if defined(SUBSURFACE)
+
+		radiance *= saturate((dotNL + 0.5) / 2.25);
+
+	#endif
+
+	vec3 Fd = radiance * diffuseColor;
+
+	return Fd;
+}
+/////////////////////////////////////////////
+
 void RE_Direct_Cloth( const in IncidentLight directLight, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {
 
 	float dotNL = saturate( dot( geometry.normal, directLight.direction ) );
 
-	vec3 irradiance = dotNL * directLight.color;
+	vec3 irradiance = directLight.color;
 
 	#ifndef PHYSICALLY_CORRECT_LIGHTS
 
@@ -79,45 +100,23 @@ void RE_Direct_Cloth( const in IncidentLight directLight, const in GeometricCont
 
 	#endif
 
-	#ifdef CLEARCOAT
-
-		float ccDotNL = saturate( dot( geometry.clearcoatNormal, directLight.direction ) );
-
-		vec3 ccIrradiance = ccDotNL * directLight.color;
-
-		#ifndef PHYSICALLY_CORRECT_LIGHTS
-
-			ccIrradiance *= PI; // punctual light
-
-		#endif
-
-		float clearcoatDHR = 0.0;
-		// float clearcoatDHR = material.clearcoat * clearcoatDHRApprox( material.clearcoatRoughness, ccDotNL );
-
-		// reflectedLight.directSpecular += ccIrradiance * material.clearcoat * BRDF_Specular_GGX( directLight, geometry.viewDir, geometry.clearcoatNormal, vec3( DEFAULT_SPECULAR_COEFFICIENT ), material.clearcoatRoughness );
-	#else
-
-		float clearcoatDHR = 0.0;
-
-	#endif
-
-	reflectedLight.directSpecular += ccIrradiance * material.clearcoat * BRDF_Specular_Sheen(
+	reflectedLight.directSpecular += irradiance * BRDF_Specular_Sheen(
 		material.specularRoughness,
 		directLight.direction,
 		geometry,
 		material.sheenColor
-	);
+	) * dotNL;
 	
-	reflectedLight.directDiffuse += ( 1.0 - clearcoatDHR ) * irradiance * BRDF_Diffuse_Cloth(directLight, geometry.viewDir, geometry.normal, material.diffuseColor);
+	reflectedLight.directDiffuse += irradiance * BRDF_Diffuse_Cloth(directLight, geometry.viewDir, geometry.normal, material.diffuseColor);
 
 	#if defined(SUBSURFACE)
 
 		reflectedLight.directDiffuse *= saturate(subsurfaceColor + dotNL); 
-		reflectedLight.directSpecular *= directLight.color * dotNL;
 
 	#else
-		reflectedLight.directDiffuse *= directLight.color * dotNL;
-		reflectedLight.directSpecular *= directLight.color * dotNL;
+
+		reflectedLight.directDiffuse *= dotNL;
+
 	#endif
 
 }
