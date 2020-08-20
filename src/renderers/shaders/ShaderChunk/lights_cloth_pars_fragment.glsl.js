@@ -121,9 +121,19 @@ void RE_Direct_Cloth( const in IncidentLight directLight, const in GeometricCont
 
 }
 
-void RE_IndirectDiffuse_Physical( const in vec3 irradiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {
+void RE_IndirectDiffuse_Cloth( const in vec3 irradiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {
+	    // diffuse layer
+    float diffuseBRDF = 1.0;
+    #if defined(SUBSURFACE)
+			float dotNV = dot( geometry.normal, geometry.viewDir );
+			diffuseBRDF *= saturate((dotNV + 0.5) / 2.25);
+    #endif
 
-	reflectedLight.indirectDiffuse += irradiance * BRDF_Diffuse_Lambert( material.diffuseColor );
+    reflectedLight.indirectDiffuse = material.diffuseColor * irradiance * diffuseBRDF;
+    
+    #if defined(SUBSURFACE)
+      reflectedLight.indirectDiffuse *= saturate(subsurfaceColor + dotNV);
+    #endif
 
 }
 
@@ -165,7 +175,7 @@ void RE_IndirectSpecular_Physical( const in vec3 radiance, const in vec3 irradia
 
 #define RE_Direct							RE_Direct_Cloth
 #define RE_Direct_RectArea		RE_Direct_RectArea_Physical
-#define RE_IndirectDiffuse		RE_IndirectDiffuse_Physical
+#define RE_IndirectDiffuse		RE_IndirectDiffuse_Cloth
 #define RE_IndirectSpecular		RE_IndirectSpecular_Physical
 
 `;
