@@ -274,10 +274,8 @@ vec3 BRDF_Specular_GGX_Environment( const in vec3 viewDir, const in vec3 normal,
 
 } // validated
 
-// Fdez-Agüera's "Multiple-Scattering Microfacet Model for Real-Time Image Based Lighting"
-// Approximates multiscattering in order to preserve energy.
-// http://www.jcgt.org/published/0008/01/03/
-void BRDF_Specular_Multiscattering_Environment( const in GeometricContext geometry, const in vec3 specularColor, const in float roughness, inout vec3 singleScatter, inout vec3 multiScatter ) {
+// TODO
+void BRDF_Specular_Multiscattering_Environment_Cloth( const in GeometricContext geometry, const in vec3 specularColor, const in float roughness, inout vec3 singleScatter, inout vec3 multiScatter ) {
 
 	float dotNV = saturate( dot( geometry.normal, geometry.viewDir ) );
 

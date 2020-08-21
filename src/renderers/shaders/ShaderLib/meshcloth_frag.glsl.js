@@ -2,8 +2,10 @@ export default /* glsl */`
 #define STANDARD
 
 #ifdef CLOTH
+	#define REFLECTIVITY
 	#define CLEARCOAT
 	#define TRANSMISSION
+	#define INTEGRATE_BRDF_CLOTH
 #endif
 
 uniform vec3 diffuse;
@@ -22,6 +24,10 @@ uniform float opacity;
 #ifdef CLEARCOAT
 	uniform float clearcoat;
 	uniform float clearcoatRoughness;
+#endif
+
+#ifdef INTEGRATE_BRDF_CLOTH
+	uniform sampler2D brdfCloth;
 #endif
 
 #ifdef USE_SHEEN
@@ -105,8 +111,9 @@ void main() {
 	#include <aomap_fragment>
 
 	vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance;
+	// vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + totalEmissiveRadiance;
 	// vec3 outgoingLight = reflectedLight.directSpecular  + totalEmissiveRadiance;
-	// vec3 outgoingLight = reflectedLight.directDiffuse + totalEmissiveRadiance;
+	// vec3 outgoingLight = reflectedLight.indirectDiffuse + totalEmissiveRadiance;
 
 	// this is a stub for the transmission model
 	#ifdef TRANSMISSION

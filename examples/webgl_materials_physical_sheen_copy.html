@@ -23,6 +23,7 @@
 			import { GUI } from './jsm/libs/dat.gui.module.js';
 
 			import { OrbitControls } from './jsm/controls/OrbitControls.js';
+			import { HDRCubeTextureLoader } from './jsm/loaders/HDRCubeTextureLoader.js';
 
 			import { FBXLoader } from './jsm/loaders/FBXLoader.js';
 
@@ -47,41 +48,70 @@
 				scene = new THREE.Scene();
 				scene.background = new THREE.Color( 0xbfd1e5 );
 
-				const params = {
-					color: new THREE.Color( 0.5, 0.3, 0.0 ),
-					sheen: new THREE.Color( 0.8, 0.2, 0.2 ),
-					subsurfaceColor: new THREE.Color( 0.6, 0.3, 0.2 ),
-				};
+				new HDRCubeTextureLoader()
+					.setDataType( THREE.UnsignedByteType )
+					.setPath( 'textures/cube/pisaHDR/' )
+					.load( [ 'px.hdr', 'nx.hdr', 'py.hdr', 'ny.hdr', 'pz.hdr', 'nz.hdr' ], ( hdrCubeMap ) => {
 
-				material = new THREE.MeshClothMaterial( {
-					clearcoat: 1.0,
-					clearcoatRoughness: 0.1,
-					roughness: 0.5,
-					color: params.color,
-					sheen: params.sheen,
-					subsurfaceColor: params.subsurfaceColor,
-					// normalMap: normalMap3,
-					// normalScale: new THREE.Vector2( 0.15, 0.15 ),
-					sheenBRDF: true,
-					side: THREE.DoubleSide,
-				} );
+						const params = {
+							color: new THREE.Color( 0.5, 0.3, 0.0 ),
+							sheen: new THREE.Color( 0.8, 0.2, 0.2 ),
+							subsurfaceColor: new THREE.Color( 0.6, 0.3, 0.2 ),
+						};
 
-				mesh.scale.multiplyScalar( .5 );
-				mesh.material = material;
-				scene.add( mesh );
+						material = new THREE.MeshClothMaterial( {
+							roughness: 0.5,
+							color: params.color,
+							sheen: params.sheen,
+							subsurfaceColor: params.subsurfaceColor,
+							envMap: hdrCubeMap.texture,
+							envMapIntensity: 1.0,
+							// normalMap: normalMap3,
+							// normalScale: new THREE.Vector2( 0.15, 0.15 ),
+							side: THREE.DoubleSide,
+						} );
 
-				camera.position.set( - 12, 7, 4 );
+						mesh.scale.multiplyScalar( .5 );
+						mesh.material = material;
+						scene.add( mesh );
 
-				var container = document.getElementById( 'container' );
-				renderer = new THREE.WebGLRenderer();
-				renderer.setPixelRatio( window.devicePixelRatio );
-				renderer.setSize( window.innerWidth, window.innerHeight );
-				renderer.shadowMap.enabled = true;
-				container.appendChild( renderer.domElement );
+						var gui = new GUI();
 
-				controls = new OrbitControls( camera, renderer.domElement );
-				controls.target.set( 0, 2, 0 );
-				controls.update();
+
+						const folder = gui.addFolder( 'Model Color' );
+						folder.addColor( params, 'color' )
+							.name( 'Color' )
+							.onChange( () => {
+
+								material.color.set( new THREE.Color( params.color.r / 255, params.color.g / 255, params.color.b / 255 ) );
+			
+							} );
+						folder.addColor( params, 'sheen' )
+							.name( 'Sheen' )
+							.onChange( () => {
+
+								material.sheen.set( new THREE.Color( params.sheen.r / 255, params.sheen.g / 255, params.sheen.b / 255 ) );
+
+							} );
+						folder.addColor( params, 'subsurfaceColor' )
+							.name( 'Subsurface' )
+							.onChange( () => {
+
+								material.subsurfaceColor.set( new THREE.Color( params.subsurfaceColor.r / 255, params.subsurfaceColor.g / 255, params.subsurfaceColor.b / 255 ) );
+			
+							} );
+						folder.open();
+
+						var hdrCubeRenderTarget = pmremGenerator.fromCubemap( hdrCubeMap );
+						hdrCubeMap.dispose();
+						pmremGenerator.dispose();
+
+						scene.background = hdrCubeRenderTarget.texture;
+						scene.environment = hdrCubeRenderTarget.texture; // UNCOMMENT
+
+						animate();
+
+					} );
 
 				// directionalLight = new THREE.DirectionalLight( 0xffffff, .5 );
 				// directionalLight.position.set( 0, 10, 0 );
@@ -94,7 +124,21 @@
 				// );
 
 				// scene.add( directionalLight );
+				camera.position.set( - 12, 7, 4 );
 
+				var container = document.getElementById( 'container' );
+				renderer = new THREE.WebGLRenderer();
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.shadowMap.enabled = true;
+				container.appendChild( renderer.domElement );
+
+				var pmremGenerator = new THREE.PMREMGenerator( renderer );
+				pmremGenerator.compileEquirectangularShader();
+
+				controls = new OrbitControls( camera, renderer.domElement );
+				controls.target.set( 0, 2, 0 );
+				controls.update();
 				// LIGHTS
 
 				particleLight = new THREE.Mesh(
@@ -111,35 +155,6 @@
 				container.appendChild( stats.dom );
 
 				window.addEventListener( 'resize', onWindowResize, false );
-
-				var gui = new GUI();
-
-
-				const folder = gui.addFolder( 'Model Color' );
-				folder.addColor( params, 'color' )
-					.name( 'Color' )
-					.onChange( () => {
-
-						material.color.set( new THREE.Color( params.color.r / 255, params.color.g / 255, params.color.b / 255 ) );
-			
-					} );
-				folder.addColor( params, 'sheen' )
-					.name( 'Sheen' )
-					.onChange( () => {
-
-						material.sheen.set( new THREE.Color( params.sheen.r / 255, params.sheen.g / 255, params.sheen.b / 255 ) );
-			
-					} );
-				folder.addColor( params, 'subsurfaceColor' )
-					.name( 'Subsurface' )
-					.onChange( () => {
-
-						material.subsurfaceColor.set( new THREE.Color( params.subsurfaceColor.r / 255, params.subsurfaceColor.g / 255, params.subsurfaceColor.b / 255 ) );
-			
-					} );
-				folder.open();
-
-				animate();
 
 			}
 

@@ -122,39 +122,24 @@ void RE_Direct_Cloth( const in IncidentLight directLight, const in GeometricCont
 }
 
 void RE_IndirectDiffuse_Cloth( const in vec3 irradiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {
-	    // diffuse layer
-    float diffuseBRDF = 1.0;
-    #if defined(SUBSURFACE)
-			float dotNV = dot( geometry.normal, geometry.viewDir );
-			diffuseBRDF *= saturate((dotNV + 0.5) / 2.25);
-    #endif
 
-    reflectedLight.indirectDiffuse = material.diffuseColor * irradiance * diffuseBRDF;
-    
-    #if defined(SUBSURFACE)
-      reflectedLight.indirectDiffuse *= saturate(subsurfaceColor + dotNV);
-    #endif
+		reflectedLight.indirectDiffuse += irradiance * BRDF_Diffuse_Lambert( material.diffuseColor );
 
 }
 
-void RE_IndirectSpecular_Physical( const in vec3 radiance, const in vec3 irradiance, const in vec3 clearcoatRadiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight) {
+void RE_IndirectSpecular_Cloth( const in vec3 radiance, const in vec3 irradiance, const in vec3 clearcoatRadiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight) {
 
-	#ifdef CLEARCOAT
+		// float perceptualRoughness = material.specularRoughness * material.specularRoughness;
+		// float dotNV = dot( geometry.normal, geometry.viewDir );
 
-		float ccDotNV = saturate( dot( geometry.clearcoatNormal, geometry.viewDir ) );
+    // float dgTerms = textureLod(brdfCloth, vec2( dotNV, perceptualRoughness ), 0.0).b;
+    // vec3 E = material.sheenColor * dgTerms;
+    // vec3 r = reflect( -geometry.viewDir, geometry.normal );
+    // r = mix( r, n, material.specularRoughness * material.specularRoughness );
 
-		reflectedLight.indirectSpecular += clearcoatRadiance * material.clearcoat * BRDF_Specular_GGX_Environment( geometry.viewDir, geometry.clearcoatNormal, vec3( DEFAULT_SPECULAR_COEFFICIENT ), material.clearcoatRoughness );
+    // vec3 prefilteredRadiance = textureLod(light_iblSpecular, r, lod).rgb;
 
-		float ccDotNL = ccDotNV;
-		float clearcoatDHR = material.clearcoat * clearcoatDHRApprox( material.clearcoatRoughness, ccDotNL );
-
-	#else
-
-		float clearcoatDHR = 0.0;
-
-	#endif
-
-	float clearcoatInv = 1.0 - clearcoatDHR;
+    // reflectedLight.indirectDiffuse += E * prefilteredRadiance;
 
 	// Both indirect specular and indirect diffuse light accumulate here
 
@@ -162,20 +147,29 @@ void RE_IndirectSpecular_Physical( const in vec3 radiance, const in vec3 irradia
 	vec3 multiScattering = vec3( 0.0 );
 	vec3 cosineWeightedIrradiance = irradiance * RECIPROCAL_PI;
 
-	BRDF_Specular_Multiscattering_Environment( geometry, material.specularColor, material.specularRoughness, singleScattering, multiScattering );
+	BRDF_Specular_Multiscattering_Environment_Cloth( geometry, material.specularColor, material.specularRoughness, singleScattering, multiScattering );
 
-	vec3 diffuse = material.diffuseColor * ( 1.0 - ( singleScattering + multiScattering ) );
-
-	reflectedLight.indirectSpecular += clearcoatInv * radiance * singleScattering;
+	reflectedLight.indirectSpecular +=  radiance * singleScattering;
 	reflectedLight.indirectSpecular += multiScattering * cosineWeightedIrradiance;
 
-	reflectedLight.indirectDiffuse += diffuse * cosineWeightedIrradiance;
+	vec3 E = singleScattering + multiScattering;
+	float diffuseWrapFactor = 1.0;
+	#if defined(SUBSURFACE)
+		float dotNV = dot( geometry.normal, geometry.viewDir );
+		diffuseWrapFactor *= saturate((dotNV + 0.5) / 2.25);
+	#endif
+
+	vec3 Fd = material.diffuseColor * cosineWeightedIrradiance * ( 1.0 - E ) * diffuseWrapFactor;
+	#if defined(SUBSURFACE)
+		Fd *= saturate(subsurfaceColor + dotNV);
+	#endif
+	reflectedLight.indirectDiffuse += Fd;
 
 }
 
 #define RE_Direct							RE_Direct_Cloth
 #define RE_Direct_RectArea		RE_Direct_RectArea_Physical
 #define RE_IndirectDiffuse		RE_IndirectDiffuse_Cloth
-#define RE_IndirectSpecular		RE_IndirectSpecular_Physical
+#define RE_IndirectSpecular		RE_IndirectSpecular_Cloth
 
 `;
