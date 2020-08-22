@@ -129,33 +129,22 @@ void RE_IndirectDiffuse_Cloth( const in vec3 irradiance, const in GeometricConte
 
 void RE_IndirectSpecular_Cloth( const in vec3 radiance, const in vec3 irradiance, const in vec3 clearcoatRadiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight) {
 
-		// float perceptualRoughness = material.specularRoughness * material.specularRoughness;
-		// float dotNV = dot( geometry.normal, geometry.viewDir );
+		float perceptualRoughness = material.specularRoughness * material.specularRoughness;
+		float dotNV = dot( geometry.normal, geometry.viewDir );
 
-    // float dgTerms = textureLod(brdfCloth, vec2( dotNV, perceptualRoughness ), 0.0).b;
-    // vec3 E = material.sheenColor * dgTerms;
-    // vec3 r = reflect( -geometry.viewDir, geometry.normal );
+    float dgTerms = textureLod(brdfCloth, vec2( dotNV, perceptualRoughness ), 0.0).b;
+    vec3 E = material.sheenColor * dgTerms;
+    vec3 r = reflect( -geometry.viewDir, geometry.normal );
+		// TODO
     // r = mix( r, n, material.specularRoughness * material.specularRoughness );
-
-    // vec3 prefilteredRadiance = textureLod(light_iblSpecular, r, lod).rgb;
-
+    // vec3 prefilteredRadiance = textureLod(light_iblSpecular, r, perceptualRoughness).rgb;
     // reflectedLight.indirectDiffuse += E * prefilteredRadiance;
 
-	// Both indirect specular and indirect diffuse light accumulate here
 
-	vec3 singleScattering = vec3( 0.0 );
-	vec3 multiScattering = vec3( 0.0 );
 	vec3 cosineWeightedIrradiance = irradiance * RECIPROCAL_PI;
 
-	BRDF_Specular_Multiscattering_Environment_Cloth( geometry, material.specularColor, material.specularRoughness, singleScattering, multiScattering );
-
-	reflectedLight.indirectSpecular +=  radiance * singleScattering;
-	reflectedLight.indirectSpecular += multiScattering * cosineWeightedIrradiance;
-
-	vec3 E = singleScattering + multiScattering;
 	float diffuseWrapFactor = 1.0;
 	#if defined(SUBSURFACE)
-		float dotNV = dot( geometry.normal, geometry.viewDir );
 		diffuseWrapFactor *= saturate((dotNV + 0.5) / 2.25);
 	#endif
 
