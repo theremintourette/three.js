@@ -5,7 +5,6 @@ import { Vector3 } from '../../math/Vector3.js';
 import { UniformsLib } from './UniformsLib.js';
 import { Color } from '../../math/Color.js';
 import { Matrix3 } from '../../math/Matrix3.js';
-import brdfCloth from './brdfCloth.js';
 
 const ShaderLib = {
 
@@ -314,7 +313,7 @@ ShaderLib.cloth = {
 		ShaderLib.physical.uniforms,
 		{
 			subsurfaceColor: { value: new Color( 0xffffff ) },
-			brdfCloth: { value: brdfCloth },
+			brdfCloth: { value: null },
 		}
 	] ),
 

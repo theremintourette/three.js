@@ -1,7 +1,8 @@
-import { RGBFormat } from '../../constants.js';
-import { DataTexture } from '../../textures/DataTexture.js';
+import { DataTexture } from '../textures/DataTexture.js';
+import { HalfFloatType, RGBFormat } from '../constants.js';
+import { TextureLoader } from '../loaders/TextureLoader.js';
 
-const brdfData = Uint16Array.from( [
+const brdfData = new Uint16Array( [
 
 	0x3bd7, 0x3bff, 0x4c90, 0x3b8b, 0x3c00, 0x4751, 0x3b40, 0x3c00, 0x4216, 0x3af7, 0x3c00, 0x3cfd,
 	0x3ab0, 0x3c00, 0x3748, 0x3a6c, 0x3c00, 0x316a, 0x3a2a, 0x3c00, 0x2b1e, 0x39ea, 0x3c00, 0x2510,
@@ -4107,4 +4108,5 @@ export default new DataTexture(
 	128,
 	128,
 	RGBFormat,
+	HalfFloatType,
 );

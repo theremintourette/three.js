@@ -639,6 +639,8 @@ function WebGLMaterials( properties ) {
 
 		if ( material.subsurfaceColor ) uniforms.subsurfaceColor.value.copy( material.subsurfaceColor );
 
+		if ( material.brdfCloth ) uniforms.brdfCloth.value = material.brdfCloth;
+
 	}
 
 	function refreshUniformsMatcap( uniforms, material ) {

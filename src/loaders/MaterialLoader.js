@@ -247,6 +247,8 @@ MaterialLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 
 		}
 
+		if ( json.brdfCloth !== undefined ) material.brdfCloth = getTexture( json.brdfCloth );
+
 		if ( json.displacementMap !== undefined ) material.displacementMap = getTexture( json.displacementMap );
 		if ( json.displacementScale !== undefined ) material.displacementScale = json.displacementScale;
 		if ( json.displacementBias !== undefined ) material.displacementBias = json.displacementBias;

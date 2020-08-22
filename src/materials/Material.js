@@ -179,6 +179,12 @@ Material.prototype = Object.assign( Object.create( EventDispatcher.prototype ), 
 		if ( this.clearcoatRoughness !== undefined ) data.clearcoatRoughness = this.clearcoatRoughness;
 		if ( this.subsurfaceColor && this.subsurfaceColor.isColor ) data.subsurfaceColor = this.subsurfaceColor.getHex();
 
+		if ( this.brdfCloth && this.brdfCloth.isTexture ) {
+
+			data.brdfCloth = this.brdfCloth.toJSON( meta ).uuid;
+
+		}
+
 		if ( this.clearcoatMap && this.clearcoatMap.isTexture ) {
 
 			data.clearcoatMap = this.clearcoatMap.toJSON( meta ).uuid;

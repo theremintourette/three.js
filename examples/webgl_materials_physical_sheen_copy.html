@@ -27,6 +27,9 @@
 
 			import { FBXLoader } from './jsm/loaders/FBXLoader.js';
 
+			var textureLoader = new THREE.TextureLoader();
+			var normalMap = textureLoader.load( "textures/carbon/Carbon_Normal.png" );
+
 			// Graphics variables
 			var camera, controls, scene, renderer, stats;
 			var directionalLight, particleLight;
@@ -66,7 +69,7 @@
 							subsurfaceColor: params.subsurfaceColor,
 							envMap: hdrCubeMap.texture,
 							envMapIntensity: 1.0,
-							// normalMap: normalMap3,
+							normalMap,
 							// normalScale: new THREE.Vector2( 0.15, 0.15 ),
 							side: THREE.DoubleSide,
 						} );

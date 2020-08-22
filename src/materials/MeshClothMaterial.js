@@ -1,6 +1,7 @@
 import { Vector2 } from '../math/Vector2.js';
 import { MeshStandardMaterial } from './MeshStandardMaterial.js';
 import { Color } from '../math/Color.js';
+import brdfCloth from './clothBRDF.js';
 
 /**
  * parameters = {
@@ -50,6 +51,8 @@ function MeshClothMaterial( parameters ) {
 	this.transmission = 0.0;
 	this.transmissionMap = null;
 	this.subsurfaceColor = new Color( 0xffffff );
+
+	this.brdfCloth = brdfCloth;
 
 	this.setValues( parameters );
 
@@ -101,6 +104,16 @@ MeshClothMaterial.prototype.copy = function ( source ) {
 	} else {
 
 		this.subsurfaceColor = null;
+
+	}
+
+	if ( source.brdfCloth ) {
+
+		this.brdfCloth = source.brdfCloth;
+
+	} else {
+
+		this.brdfCloth = null;
 
 	}
 
