@@ -123,8 +123,7 @@ void RE_Direct_Cloth( const in IncidentLight directLight, const in GeometricCont
 
 void RE_IndirectDiffuse_Cloth( const in vec3 irradiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {
 
-		// Not being used right now
-		reflectedLight.indirectDiffuse += irradiance * BRDF_Diffuse_Lambert( material.diffuseColor ); // SH (irradiance from getLightProbeIrradiance seems to be vec3(0))
+		reflectedLight.indirectDiffuse += irradiance * BRDF_Diffuse_Lambert( material.diffuseColor );
 
 }
 
@@ -134,22 +133,25 @@ void RE_IndirectSpecular_Cloth( const in vec3 radiance, const in vec3 irradiance
 
 	float prefilteredDG = textureLod(brdfCloth, vec2( dotNV, material.specularRoughness * material.specularRoughness ), 0.0).b;
 	vec3 E = material.sheenColor * prefilteredDG;
-	reflectedLight.indirectSpecular += E * radiance; // BRDF * preconvolutedRadiance (radiance from getLightProbeIndirectRadiance)
+	reflectedLight.indirectSpecular += E * radiance;
 
 	float diffuseWrapFactor = 1.0;
 	#if defined(SUBSURFACE)
 		diffuseWrapFactor *= saturate((dotNV + 0.5) / 2.25);
 	#endif
 
-	// Now using irradiance coming from SH
-	vec3 Fd = reflectedLight.indirectDiffuse * ( 1.0 - E ) * diffuseWrapFactor;
+	// Combine envmap and SH diffuse irradiance
+	vec3 Fd_SH = reflectedLight.indirectDiffuse * ( 1.0 - E ) * diffuseWrapFactor;
+	vec3 Fd_Lod = irradiance * BRDF_Diffuse_Lambert( material.diffuseColor )  * ( 1.0 - E ) * diffuseWrapFactor;
+	vec3 Fd = Fd_SH + Fd_Lod;
+
 	#if defined(SUBSURFACE)
 
 		Fd *= saturate(subsurfaceColor + dotNV);
 
 	#endif
 
-	reflectedLight.indirectDiffuse = Fd; // BRDFLambert * irradiance * (1 - E) * ssWrapFactor
+	reflectedLight.indirectDiffuse = Fd;
 
 }
 
