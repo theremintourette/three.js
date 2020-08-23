@@ -57,18 +57,19 @@
 					.load( [ 'px.hdr', 'nx.hdr', 'py.hdr', 'ny.hdr', 'pz.hdr', 'nz.hdr' ], ( hdrCubeMap ) => {
 
 						const params = {
-							color: new THREE.Color( 0.5, 0.3, 0.0 ),
-							sheen: new THREE.Color( 0.8, 0.2, 0.2 ),
-							subsurfaceColor: new THREE.Color( 0.6, 0.3, 0.2 ),
+							color: new THREE.Color( 1.0, 1.0, 1.0 ),
+							sheen: new THREE.Color( 1.0, 1.0, 1.0 ),
+							subsurfaceColor: new THREE.Color( 1.0, 1.0, 1.0 ),
+							roughness: 1.0,
 						};
 
 						material = new THREE.MeshClothMaterial( {
-							roughness: 0.5,
+							roughness: params.roughness,
 							color: params.color,
 							sheen: params.sheen,
 							subsurfaceColor: params.subsurfaceColor,
 							envMap: hdrCubeMap.texture,
-							envMapIntensity: 1.0,
+							envMapIntensity: params.roughness,
 							// normalMap,
 							// normalScale: new THREE.Vector2( 0.15, 0.15 ),
 							side: THREE.DoubleSide,
@@ -84,6 +85,7 @@
 						const folder = gui.addFolder( 'Model Color' );
 						folder.addColor( params, 'color' )
 							.name( 'Color' )
+							.setValue( new THREE.Color( 255, 255, 255 ) )
 							.onChange( () => {
 
 								material.color.set( new THREE.Color( params.color.r / 255, params.color.g / 255, params.color.b / 255 ) );
@@ -91,6 +93,7 @@
 							} );
 						folder.addColor( params, 'sheen' )
 							.name( 'Sheen' )
+							.setValue( new THREE.Color( 255, 255, 255 ) )
 							.onChange( () => {
 
 								material.sheen.set( new THREE.Color( params.sheen.r / 255, params.sheen.g / 255, params.sheen.b / 255 ) );
@@ -98,11 +101,23 @@
 							} );
 						folder.addColor( params, 'subsurfaceColor' )
 							.name( 'Subsurface' )
+							.setValue( new THREE.Color( 255, 255, 255 ) )
 							.onChange( () => {
 
 								material.subsurfaceColor.set( new THREE.Color( params.subsurfaceColor.r / 255, params.subsurfaceColor.g / 255, params.subsurfaceColor.b / 255 ) );
 			
 							} );
+
+						folder.add( params, 'roughness', 0, 1 )
+							.name( 'Roughness' )
+							.setValue( 1.0 )
+							.onChange( () => {
+
+								material.roughness = params.roughness;
+								material.envMapIntensity = params.roughness;
+
+							} );
+
 						folder.open();
 
 						var hdrCubeRenderTarget = pmremGenerator.fromCubemap( hdrCubeMap );

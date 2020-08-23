@@ -123,36 +123,33 @@ void RE_Direct_Cloth( const in IncidentLight directLight, const in GeometricCont
 
 void RE_IndirectDiffuse_Cloth( const in vec3 irradiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight ) {
 
-		reflectedLight.indirectDiffuse += irradiance * BRDF_Diffuse_Lambert( material.diffuseColor );
+		// Not being used right now
+		reflectedLight.indirectDiffuse += irradiance * BRDF_Diffuse_Lambert( material.diffuseColor ); // SH (irradiance from getLightProbeIrradiance seems to be vec3(0))
 
 }
 
 void RE_IndirectSpecular_Cloth( const in vec3 radiance, const in vec3 irradiance, const in vec3 clearcoatRadiance, const in GeometricContext geometry, const in PhysicalMaterial material, inout ReflectedLight reflectedLight) {
 
-		float perceptualRoughness = material.specularRoughness * material.specularRoughness;
-		float dotNV = dot( geometry.normal, geometry.viewDir );
+	float dotNV = dot( geometry.normal, geometry.viewDir );
 
-    float dgTerms = textureLod(brdfCloth, vec2( dotNV, perceptualRoughness ), 0.0).b;
-    vec3 E = material.sheenColor * dgTerms;
-    vec3 r = reflect( -geometry.viewDir, geometry.normal );
-		// TODO
-    // r = mix( r, n, material.specularRoughness * material.specularRoughness );
-    // vec3 prefilteredRadiance = textureLod(light_iblSpecular, r, perceptualRoughness).rgb;
-    // reflectedLight.indirectDiffuse += E * prefilteredRadiance;
-
-
-	vec3 cosineWeightedIrradiance = irradiance * RECIPROCAL_PI;
+	float prefilteredDG = textureLod(brdfCloth, vec2( dotNV, material.specularRoughness ), 0.0).b;
+	vec3 E = material.sheenColor * prefilteredDG;
+	reflectedLight.indirectSpecular += E * radiance; // BRDF * preconvolutedRadiance (radiance from getLightProbeIndirectRadiance)
 
 	float diffuseWrapFactor = 1.0;
 	#if defined(SUBSURFACE)
 		diffuseWrapFactor *= saturate((dotNV + 0.5) / 2.25);
 	#endif
 
-	vec3 Fd = material.diffuseColor * cosineWeightedIrradiance * ( 1.0 - E ) * diffuseWrapFactor;
+  // Filmanent uses SH here, but reflectedLight.indirectDiffuse is vec3(0). Using irradiance from getLightProbeIndirectIrradiance instead
+	vec3 Fd = material.diffuseColor * RECIPROCAL_PI * irradiance * ( 1.0 - E ) * diffuseWrapFactor;
 	#if defined(SUBSURFACE)
+
 		Fd *= saturate(subsurfaceColor + dotNV);
+
 	#endif
-	reflectedLight.indirectDiffuse += Fd;
+
+	reflectedLight.indirectDiffuse = Fd; // BRDFLambert * irradiance * (1 - E) * ssWrapFactor
 
 }
 
