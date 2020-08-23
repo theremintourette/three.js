@@ -132,7 +132,7 @@ void RE_IndirectSpecular_Cloth( const in vec3 radiance, const in vec3 irradiance
 
 	float dotNV = dot( geometry.normal, geometry.viewDir );
 
-	float prefilteredDG = textureLod(brdfCloth, vec2( dotNV, material.specularRoughness ), 0.0).b;
+	float prefilteredDG = textureLod(brdfCloth, vec2( dotNV, material.specularRoughness * material.specularRoughness ), 0.0).b;
 	vec3 E = material.sheenColor * prefilteredDG;
 	reflectedLight.indirectSpecular += E * radiance; // BRDF * preconvolutedRadiance (radiance from getLightProbeIndirectRadiance)
 
@@ -141,8 +141,8 @@ void RE_IndirectSpecular_Cloth( const in vec3 radiance, const in vec3 irradiance
 		diffuseWrapFactor *= saturate((dotNV + 0.5) / 2.25);
 	#endif
 
-  // Filmanent uses SH here, but reflectedLight.indirectDiffuse is vec3(0). Using irradiance from getLightProbeIndirectIrradiance instead
-	vec3 Fd = material.diffuseColor * RECIPROCAL_PI * irradiance * ( 1.0 - E ) * diffuseWrapFactor;
+	// Now using irradiance coming from SH
+	vec3 Fd = reflectedLight.indirectDiffuse * ( 1.0 - E ) * diffuseWrapFactor;
 	#if defined(SUBSURFACE)
 
 		Fd *= saturate(subsurfaceColor + dotNV);
