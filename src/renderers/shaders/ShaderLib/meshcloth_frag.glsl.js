@@ -123,7 +123,6 @@ void main() {
 	#endif
 
 	gl_FragColor = vec4( outgoingLight, diffuseColor.a );
-	// gl_FragColor = vec4( 10000.0 * texture2D(brdfCloth, gl_FragCoord.xy).rgb, diffuseColor.a );
 
 	#include <tonemapping_fragment>
 	#include <encodings_fragment>

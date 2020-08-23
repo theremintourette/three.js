@@ -275,7 +275,7 @@ vec3 BRDF_Specular_GGX_Environment( const in vec3 viewDir, const in vec3 normal,
 } // validated
 
 // TODO
-void BRDF_Specular_Multiscattering_Environment_Cloth( const in GeometricContext geometry, const in vec3 specularColor, const in float roughness, inout vec3 singleScatter, inout vec3 multiScatter ) {
+void BRDF_Specular_Multiscattering_Environment( const in GeometricContext geometry, const in vec3 specularColor, const in float roughness, inout vec3 singleScatter, inout vec3 multiScatter ) {
 
 	float dotNV = saturate( dot( geometry.normal, geometry.viewDir ) );
 
