@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - light probe</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="main.css">
+	</head>
+
+	<body>
+		<div id="info">
+			<a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> webgl - light probe
+		</div>
+
+		<script type="module">
+
+			import * as THREE from '../src/Three.js';
+
+			import { GUI } from './jsm/libs/dat.gui.module.js';
+
+			import { OrbitControls } from './jsm/controls/OrbitControls.js';
+			import { LightProbeGenerator } from './jsm/lights/LightProbeGenerator.js';
+
+			import { FBXLoader } from './jsm/loaders/FBXLoader.js';
+
+			var mesh, renderer, scene, camera;
+
+			var gui;
+
+			var lightProbe;
+			var directionalLight;
+			var particleLight;
+
+			// linear color space
+			var API = {
+				lightProbeIntensity: 1.0,
+				directionalLightIntensity: 0,
+				particleLightIntensity: 0.5,
+				envMapIntensity: 1.0,
+				color: new THREE.Color( 1, 1, 1 ),
+				sheen: new THREE.Color( 1, 1, 1 ),
+				subsurface: new THREE.Color( 1, 1, 1 ),
+				roughness: 1.0,
+			};
+
+			init();
+
+			function init() {
+
+				// model
+				new FBXLoader().load( 'models/fbx/cloth.fbx', function ( loadedModel ) {
+
+					mesh = loadedModel.children[ 0 ];
+
+					// renderer
+					renderer = new THREE.WebGLRenderer( { antialias: true } );
+					renderer.setPixelRatio( window.devicePixelRatio );
+					renderer.setSize( window.innerWidth, window.innerHeight );
+					document.body.appendChild( renderer.domElement );
+
+					// tone mapping
+					renderer.toneMapping = THREE.NoToneMapping;
+
+					renderer.outputEncoding = THREE.sRGBEncoding;
+
+					// scene
+					scene = new THREE.Scene();
+
+					// camera
+					camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 1000 );
+					camera.position.set( 0, 25, 25 );
+
+					// controls
+					var controls = new OrbitControls( camera, renderer.domElement );
+					controls.addEventListener( 'change', render );
+					controls.minDistance = 10;
+					controls.maxDistance = 50;
+
+					// probe
+					lightProbe = new THREE.LightProbe();
+					scene.add( lightProbe );
+
+					// light
+					directionalLight = new THREE.DirectionalLight( 0xffffff, API.directionalLightIntensity );
+					directionalLight.position.set( 10, 10, 10 );
+					scene.add( directionalLight );
+
+					// particle light
+					particleLight = new THREE.Mesh(
+						new THREE.SphereBufferGeometry( 4, 8, 8 ),
+						new THREE.MeshBasicMaterial( { color: 0xffffff } )
+					);
+					scene.add( particleLight );
+					particleLight.add( new THREE.PointLight( 0xffffff, 0.5 ) );
+
+
+					// envmap
+					var genCubeUrls = function ( prefix, postfix ) {
+
+						return [
+							prefix + 'px' + postfix, prefix + 'nx' + postfix,
+							prefix + 'py' + postfix, prefix + 'ny' + postfix,
+							prefix + 'pz' + postfix, prefix + 'nz' + postfix
+						];
+
+					};
+
+					var urls = genCubeUrls( 'textures/cube/pisa/', '.png' );
+
+					new THREE.CubeTextureLoader().load( urls, function ( cubeTexture ) {
+
+						cubeTexture.encoding = THREE.sRGBEncoding;
+
+						scene.background = cubeTexture;
+
+						lightProbe.copy( LightProbeGenerator.fromCubeTexture( cubeTexture ) );
+
+						mesh.material = new THREE.MeshClothMaterial( {
+							color: API.color,
+							sheen: API.sheen,
+							subsurface: API.subsurface,
+							roughness: API.roughness,
+							envMap: cubeTexture,
+							envMapIntensity: API.envMapIntensity,
+							side: THREE.DoubleSide,
+						} );
+
+						// mesh
+						scene.add( mesh );
+						// gui
+						gui = new GUI();
+
+						gui.width = 300;
+
+						gui.domElement.style.userSelect = 'none';
+
+						var fl = gui.addFolder();
+
+						fl.add( API, 'lightProbeIntensity', 0, 1, 0.02 )
+							.name( 'Indirect Diffuse' )
+							.onChange( function () {
+
+								lightProbe.intensity = API.lightProbeIntensity;
+
+							} );
+
+						fl.add( API, 'envMapIntensity', 0, 1, 0.02 )
+							.name( 'Indirect Specular' )
+							.onChange( function () {
+
+								mesh.material.envMapIntensity = API.envMapIntensity;
+
+							} );
+
+						fl.add( API, 'particleLightIntensity', 0, 1, 0.02 )
+							.name( 'Point Light' )
+							.onChange( function () {
+
+								particleLight.children[ 0 ].intensity = API.particleLightIntensity;
+
+							} );
+
+						fl.add( API, 'directionalLightIntensity', 0, 1, 0.02 )
+							.name( 'Directional Light' )
+							.onChange( function () {
+
+								directionalLight.intensity = API.directionalLightIntensity;
+
+							} );
+
+						fl.add( API, 'roughness', 0, 1, 0.02 )
+							.name( 'Roughness' )
+							.onChange( function () {
+
+								mesh.material.roughness = API.roughness;
+
+							} );
+
+						fl.addColor( API, 'color' )
+							.name( 'Color' )
+							.setValue( { r: 255, g: 255, b: 255 } )
+							.onChange( () => {
+
+								mesh.material.color.set( new THREE.Color( API.color.r / 255, API.color.g / 255, API.color.b / 255 ) );
+
+							} );
+						fl.addColor( API, 'sheen' )
+							.name( 'Sheen' )
+							.setValue( { r: 255, g: 255, b: 255 } )
+
+							.onChange( () => {
+
+								mesh.material.sheen.set( new THREE.Color( API.sheen.r / 255, API.sheen.g / 255, API.sheen.b / 255 ) );
+
+							} );
+						fl.addColor( API, 'subsurface' )
+							.name( 'Subsurface' )
+							.setValue( { r: 255, g: 255, b: 255 } )
+							.onChange( () => {
+
+								mesh.material.subsurface.set( new THREE.Color( API.subsurface.r / 255, API.subsurface.g / 255, API.subsurface.b / 255 ) );
+
+							} );
+
+						fl.open();
+
+						animate();
+
+					} );
+			
+	} );
+
+				// listener
+				window.addEventListener( 'resize', onWindowResize, false );
+
+			}
+
+			function animate() {
+
+				var timer = Date.now() * 0.00025;
+
+				particleLight.position.x = Math.sin( timer * 7 ) * 300;
+				particleLight.position.y = Math.cos( timer * 5 ) * 400;
+				particleLight.position.z = Math.cos( timer * 3 ) * 300;
+
+				requestAnimationFrame( animate );
+				render();
+
+			}
+
+			function onWindowResize() {
+
+				renderer.setSize( window.innerWidth, window.innerHeight );
+
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+
+				render();
+
+			}
+
+			function render() {
+
+				renderer.render( scene, camera );
+
+			}
+
+		</script>
+
+	</body>
+</html>

@@ -307,5 +307,20 @@ ShaderLib.physical = {
 
 };
 
+ShaderLib.cloth = {
+
+	uniforms: mergeUniforms( [
+		ShaderLib.physical.uniforms,
+		{
+			subsurface: { value: new Color( 0xffffff ) },
+			brdfCloth: { value: null },
+		}
+	] ),
+
+	vertexShader: ShaderChunk.meshcloth_vert,
+	fragmentShader: ShaderChunk.meshcloth_frag
+
+};
+
 
 export { ShaderLib };

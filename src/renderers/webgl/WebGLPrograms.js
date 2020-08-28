@@ -25,6 +25,7 @@ function WebGLPrograms( renderer, cubemaps, extensions, capabilities, bindingSta
 		MeshToonMaterial: 'toon',
 		MeshStandardMaterial: 'physical',
 		MeshPhysicalMaterial: 'physical',
+		MeshClothMaterial: 'cloth',
 		MeshMatcapMaterial: 'matcap',
 		LineBasicMaterial: 'basic',
 		LineDashedMaterial: 'dashed',
@@ -36,7 +37,7 @@ function WebGLPrograms( renderer, cubemaps, extensions, capabilities, bindingSta
 	const parameterNames = [
 		"precision", "isWebGL2", "supportsVertexTextures", "outputEncoding", "instancing", "instancingColor",
 		"map", "mapEncoding", "matcap", "matcapEncoding", "envMap", "envMapMode", "envMapEncoding", "envMapCubeUV",
-		"lightMap", "lightMapEncoding", "aoMap", "emissiveMap", "emissiveMapEncoding", "bumpMap", "normalMap", "objectSpaceNormalMap", "tangentSpaceNormalMap", "clearcoatMap", "clearcoatRoughnessMap", "clearcoatNormalMap", "displacementMap", "specularMap",
+		"lightMap", "lightMapEncoding", "aoMap", "emissiveMap", "emissiveMapEncoding", "bumpMap", "normalMap", "objectSpaceNormalMap", "tangentSpaceNormalMap", "clearcoatMap", "clearcoatRoughnessMap", "clearcoatNormalMap", "displacementMap", "specularMap", "subsurface", "brdfCloth",
 		"roughnessMap", "metalnessMap", "gradientMap",
 		"alphaMap", "combine", "vertexColors", "vertexTangents", "vertexUvs", "uvsVertexOnly", "fog", "useFog", "fogExp2",
 		"flatShading", "sizeAttenuation", "logarithmicDepthBuffer", "skinning",
@@ -205,6 +206,10 @@ function WebGLPrograms( renderer, cubemaps, extensions, capabilities, bindingSta
 
 			transmissionMap: !! material.transmissionMap,
 
+			subsurface: !! material.subsurface,
+
+			brdfCloth: !! envMap && shaderID === 'MeshClothMaterial',
+
 			combine: material.combine,
 
 			vertexTangents: ( material.normalMap && material.vertexTangents ),
@@ -327,7 +332,6 @@ function WebGLPrograms( renderer, cubemaps, extensions, capabilities, bindingSta
 
 		const shaderID = shaderIDs[ material.type ];
 		let uniforms;
-
 		if ( shaderID ) {
 
 			const shader = ShaderLib[ shaderID ];

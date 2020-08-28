@@ -82,6 +82,7 @@ MaterialLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 		if ( json.shininess !== undefined ) material.shininess = json.shininess;
 		if ( json.clearcoat !== undefined ) material.clearcoat = json.clearcoat;
 		if ( json.clearcoatRoughness !== undefined ) material.clearcoatRoughness = json.clearcoatRoughness;
+		if ( json.subsurface !== undefined ) material.subsurface = new Color().setHex( json.subsurface );
 		if ( json.fog !== undefined ) material.fog = json.fog;
 		if ( json.flatShading !== undefined ) material.flatShading = json.flatShading;
 		if ( json.blending !== undefined ) material.blending = json.blending;
@@ -245,6 +246,8 @@ MaterialLoader.prototype = Object.assign( Object.create( Loader.prototype ), {
 			material.normalScale = new Vector2().fromArray( normalScale );
 
 		}
+
+		if ( json.brdfCloth !== undefined ) material.brdfCloth = getTexture( json.brdfCloth );
 
 		if ( json.displacementMap !== undefined ) material.displacementMap = getTexture( json.displacementMap );
 		if ( json.displacementScale !== undefined ) material.displacementScale = json.displacementScale;
